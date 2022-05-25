@@ -80,6 +80,14 @@ class Server {
                     message: data.message
                 });
             });
+
+            socket.on("draw", function (data: any) {
+                socket.broadcast.emit("draw", {
+                    channel: socket.channel,
+                    id: data.id,
+                    message: data.message
+                });
+            });
         });
 
         this.app_socket.listen(this.port, () => {
