@@ -77,14 +77,14 @@ class Server {
             socket.on("message", function (data: any) {
                 socket.broadcast.emit("message", {
                     channel: socket.channel,
-                    message: data.message
+                    message: data.message,
+                    name: data.name
                 });
             });
 
             socket.on("draw", function (data: any) {
                 socket.broadcast.emit("draw", {
                     channel: socket.channel,
-                    id: data.id,
                     message: data.message
                 });
             });
