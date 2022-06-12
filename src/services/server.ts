@@ -6,7 +6,7 @@ const fileUpload = require('express-fileupload'); //requerido para leer imagenes
 const morgan = require('morgan'); //requerido para leer imagenes
 
 import http from "http"; //* Requerido para socket io
-import { Server as ServerSocket } from 'socket.io'
+import { Server as ServerSocket, Socket } from 'socket.io'
 
 //import dbMONGO from "../db/mongo/connection";
 
@@ -78,7 +78,8 @@ class Server {
                 socket.broadcast.emit("message", {
                     channel: socket.channel,
                     message: data.message,
-                    name: data.name
+                    name: data.name,
+                    type: data.type
                 });
             });
 
