@@ -7,7 +7,7 @@ const morgan = require('morgan'); //requerido para leer imagenes
 
 import http from "http"; //* Requerido para socket io
 import { Server as ServerSocket, Socket } from 'socket.io'
-import { msgFormat } from "../utils/formatObjectUtility";
+import Sockets from "./sockets";
 
 //import dbMONGO from "../db/mongo/connection";
 
@@ -32,6 +32,7 @@ class Server {
         //this.dbConnectionMONGO();
         this.middlewares();
         this.routes();
+        this.configureSockets()
 
         AWS.config.update({
             accessKeyId: process.env.AWSaccessKeyId,
@@ -65,35 +66,11 @@ class Server {
         this.app.use(this.apiPaths.general, generalRoute);
     }
 
+    configureSockets(){
+        new Sockets(this.io)
+    }
+
     listen() {
-        this.io
-        .of('/play')
-        .on('connection', function (socket: any) {
-            
-            socket.channel = "";
-            socket.username = ""
-            
-            socket.on("disconnect", function (data: any) {
-                socket.broadcast.emit("message", msgFormat(socket.channel, 'se ha desconectado', socket.username, 'connect'));
-            });
-
-            socket.on("joinChannel", function (data: any) {
-                socket.channel = data.channel;
-            });
-    
-            socket.on("message", function (data: any) {
-                if (data.type === 'connect') socket.username = data.name;
-                socket.broadcast.emit("message", msgFormat(socket.channel, data.message, data.name, data.type));
-            });
-
-            socket.on("draw", function (data: any) {
-                socket.broadcast.emit("draw", {
-                    channel: socket.channel,
-                    message: data.message
-                });
-            });
-        });
-
         this.app_socket.listen(this.port, () => {
             console.log("Servidor corriendo en puerto " + this.port);
         });
