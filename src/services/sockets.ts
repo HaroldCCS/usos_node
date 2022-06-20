@@ -7,10 +7,10 @@ export default class Sockets {
   constructor(io: ServerSocket) {
     this.io = io
 
-    this.socketEvents()
+    this.socketChat()
   }
 
-  socketEvents() {
+  socketChat() {
     const nameSpaceChat = this.io.of('/chat');
 
     nameSpaceChat.on('connection', function (socket: any) {

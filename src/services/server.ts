@@ -1,81 +1,67 @@
 import express, { Application } from "express";
-import generalRoute from "../routes/generalRoute";
-import cors from "cors";
-import AWS from "aws-sdk"
-const fileUpload = require('express-fileupload'); //requerido para leer imagenes
-const morgan = require('morgan'); //requerido para leer imagenes
+import http from "http";
+import { Server as ServerSocket } from 'socket.io'
 
-import http from "http"; //* Requerido para socket io
-import { Server as ServerSocket, Socket } from 'socket.io'
+//ROUTES
+import generalRoute from "../routes";
+
+//MIDDLEWARES
+import ReadFile from "../middlewares/readFille";
+import DefaultConfig from "../middlewares";
+import Mongo from "../database/mongo";
+import Aws from "../middlewares/aws";
+
+//SOCKETS
 import Sockets from "./sockets";
 
-//import dbMONGO from "../db/mongo/connection";
 
 class Server {
-    private app: any;
-    private app_socket: any;
-    private io: ServerSocket;
+	private app: Application;
+	private app_socket: any;
+	private io: ServerSocket;
+	private port: string;
+	private apiPaths = {
+		general: "/api",
+	};
 
-    //private app: Application;
-    private port: string;
-    private apiPaths = {
+	public mongo: Mongo | { status: boolean } = { status: false }
 
-        general: "/api",
-    };
+	constructor() {
+		this.app = express();
+		this.app_socket = http.createServer(this.app);
+		this.io = require('socket.io')(this.app_socket, { cors: { origin: "*" } });
 
-    constructor() {
-        this.app = express();
-        this.app_socket = http.createServer(this.app); //requerido para uso sockets
-        this.io = require('socket.io')(this.app_socket, {cors: {origin: "*"}}); //requerido para uso sockets
-        this.port = process.env.PORT || "8000";
+		this.middlewares();
+		this.routes();
+		this.sockets()
+		this.connectionsDB()
 
-        //this.dbConnectionMONGO();
-        this.middlewares();
-        this.routes();
-        this.configureSockets()
+		this.port = process.env.PORT || "8000";
+	}
 
-        AWS.config.update({
-            accessKeyId: process.env.AWSaccessKeyId,
-            secretAccessKey: process.env.AWSsecretAccessKey,
-            region: process.env.AWSregion,
-        });
-    }
+	connectionsDB() {
+		this.mongo = new Mongo()
+	}
 
-    /*async dbConnectionMONGO() {
-        try {
-            await dbMONGO(process.env.DB_MONGO_CONN || "withoutURL")
-            statusDbMongo = true;
-            console.log("Database Mongo online");
-        } catch (error: any) {
-            console.error("Error connection to MongoDB")
-            statusDbMongo = false;
-        }
-    }*/
+	middlewares() {
+		new DefaultConfig(this.app)
+		new ReadFile(this.app)
+		new Aws()
+	}
 
-    middlewares() {
-        this.app.use(cors());
-        this.app.use(express.json())
-        this.app.use(express.static("public"));
-        this.app.use(fileUpload({ //requerido para leer imagenes
-            createParentPath: true
-        }));
-        this.app.use(morgan('dev')); //requerido para leer imagenes
-    }
+	routes() {
+		this.app.use(this.apiPaths.general, generalRoute);
+	}
 
-    routes() {
-        this.app.use(this.apiPaths.general, generalRoute);
-    }
+	sockets() {
+		new Sockets(this.io)
+	}
 
-    configureSockets(){
-        new Sockets(this.io)
-    }
-
-    listen() {
-        this.app_socket.listen(this.port, () => {
-            console.log("Servidor corriendo en puerto " + this.port);
-        });
-    }
+	listen() {
+		this.app_socket.listen(this.port, () => {
+			console.log("Servidor corriendo en puerto " + this.port);
+		});
+	}
 }
 
-//export let statusDbMongo: boolean = false;
-export default Server;
+export default new Server();

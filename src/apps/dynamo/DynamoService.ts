@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
 import AWS from "aws-sdk"
-import ResponseUtility from '../utils/responseUtility';
+import ResponseUtility from '../../utils/responseUtility';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
-class DynamoModule {
+class DynamoService {
 
   private docClient: DocumentClient = new AWS.DynamoDB.DocumentClient();
 
-  constructor(){
+  constructor() {
     setTimeout(() => {
       this.docClient = new AWS.DynamoDB.DocumentClient();
     }, 2000);
   }
-  
+
   public async create(req: Request, res: Response) {
     const resUtil: ResponseUtility = new ResponseUtility(res)
 
@@ -28,7 +28,6 @@ class DynamoModule {
       }
     };
 
-    console.log("Adding a new item...");
     this.docClient.put(params, function (err, data) {
       if (err) {
         console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
@@ -88,12 +87,4 @@ class DynamoModule {
   }
 }
 
-let dynamoService = new DynamoModule();
-class DynamoController {
-  static async get(req: Request, res: Response) { dynamoService.get(req, res) }
-  static async create(req: Request, res: Response) { dynamoService.create(req, res) }
-  static async delete(req: Request, res: Response) { dynamoService.delete(req, res) };
-}
-
-
-export default DynamoController;
+export default new DynamoService();
