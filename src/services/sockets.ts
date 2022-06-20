@@ -10,35 +10,39 @@ export default class Sockets {
     this.socketEvents()
   }
 
-  socketEvents(){
-    this.io
-    .of('/play')
-    .on('connection', function (socket: any) {
-        
-        socket.channel = "";
-        socket.username = ""
-        
-        socket.on("disconnect", function (data: any) {
-            socket.broadcast.emit("message", msgFormat(socket.channel, 'se ha desconectado', socket.username, 'connect'));
-        });
+  socketEvents() {
+    const nameSpaceChat = this.io.of('/chat');
 
-        socket.on("joinChannel", function (data: any) {
-            socket.channel = data.channel;
-        });
+    nameSpaceChat.on('connection', function (socket: any) {
 
-        socket.on("message", function (data: any) {
-            if (data.type === 'connect') socket.username = data.name;
-            socket.broadcast.emit("message", msgFormat(socket.channel, data.message, data.name, data.type));
-        });
+      socket.channel = "";
+      socket.username = ""
 
-        socket.on("draw", function (data: any) {
-            socket.broadcast.emit("draw", {
-                channel: socket.channel,
-                message: data.message
-            });
-        });
+      socket.on("joinChannel", function (data: any) {
+        socket.channel = data.channel;
+        socket.join(data.channel)
+      });
+
+
+      socket.on("setName", function (name: string) {
+        socket.username = name;
+        socket.to(socket.channel).emit("message", msgFormat(socket.channel, 'se ha conectado', socket.username, 'connect'));
+      });
+
+
+      socket.on("disconnect", function (data: any) {
+        socket.to(socket.channel).emit("message", msgFormat(socket.channel, 'se ha desconectado', socket.username, 'connect'));
+      });
+
+
+      socket.on("message", function (message: string) {
+        socket.to(socket.channel).emit("message", msgFormat(socket.channel, message, socket.username, 'msg'));
+      });
+
+
+      socket.on("draw", function (data: any) {
+        socket.to(socket.channel).emit("draw", data);
+      });
     });
   }
-
-
 }
