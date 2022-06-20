@@ -26,17 +26,17 @@ export default class Sockets {
 
       socket.on("setName", function (name: string) {
         socket.username = name;
-        socket.to(socket.channel).emit("message", msgFormat(socket.channel, 'se ha conectado', socket.username, 'connect'));
+        socket.to(socket.channel).emit("message", msgFormat('se ha conectado', socket.username, 'connect'));
       });
 
 
       socket.on("disconnect", function (data: any) {
-        socket.to(socket.channel).emit("message", msgFormat(socket.channel, 'se ha desconectado', socket.username, 'connect'));
+        socket.to(socket.channel).emit("message", msgFormat('se ha desconectado', socket.username, 'connect'));
       });
 
 
       socket.on("message", function (message: string) {
-        socket.to(socket.channel).emit("message", msgFormat(socket.channel, message, socket.username, 'msg'));
+        socket.to(socket.channel).emit("message", msgFormat(message, socket.username, 'msg'));
       });
 
 
