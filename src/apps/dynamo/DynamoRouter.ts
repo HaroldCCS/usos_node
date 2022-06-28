@@ -1,36 +1,24 @@
 import { Router } from "express";
 import DynamoController from "./DynamoController";
+import RouterBase from '../../routes/routerbase';
 
-export default class DynamoRouter {
-  public router: Router
-  public dynamo: DynamoController
+
+export default class DynamoRouter extends RouterBase {
 
   constructor(router: Router) {
-    this.router = router
-    this.dynamo = new DynamoController()
-
-    this.gets()
-    this.posts()
-    this.puts()
-    this.deletes()
+    super(router, DynamoController)
   }
 
   gets() {
-    this.router.get('/dynamo/:_id', this.dynamo.get);
+    this.router.get('/dynamo/:_id', this.entity.get);
   }
 
   posts() {
-    this.router.post('/dynamo', this.dynamo.create);
-
-  }
-
-  puts() {
-
+    this.router.post('/dynamo', this.entity.create);
   }
 
   deletes() {
-    this.router.delete('/dynamo/:_id', this.dynamo.delete);
-
+    this.router.delete('/dynamo/:_id', this.entity.delete);
   }
 }
 

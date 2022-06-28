@@ -1,35 +1,22 @@
 import { Router } from "express";
 import S3Controller from "./S3Controller";
+import RouterBase from '../../routes/routerbase';
 
-export default class S3Router {
-  public router: Router
-  public s3: S3Controller
+export default class S3Router extends RouterBase {
 
   constructor(router: Router) {
-    this.router = router
-    this.s3 = new S3Controller()
-
-    this.gets()
-    this.posts()
-    this.puts()
-    this.deletes()
+    super(router, S3Controller)
   }
 
   gets() {
-    this.router.get('/s3/:_id', this.s3.get);
+    this.router.get('/s3/:_id', this.entity.get);
   }
 
   posts() {
-    this.router.post('/s3', this.s3.create);
-
-  }
-
-  puts() {
-
+    this.router.post('/s3', this.entity.create);
   }
 
   deletes() {
-    this.router.delete('/s3/:_id', this.s3.delete);
-
+    this.router.delete('/s3/:_id', this.entity.delete);
   }
 }
