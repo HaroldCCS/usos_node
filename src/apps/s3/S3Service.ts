@@ -35,7 +35,8 @@ class S3Service {
             if (err) {
               console.log("Error", err);
               reject()
-            } if (data) {
+            }
+            if (data) {
               console.log("Upload Success", data.Location);
               listRutes.push(data.Location)
               resolve()

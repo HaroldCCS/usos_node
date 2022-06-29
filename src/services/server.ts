@@ -6,7 +6,7 @@ import { Server as ServerSocket } from 'socket.io'
 import generalRoute from "../routes";
 
 //MIDDLEWARES
-import ReadFile from "../middlewares/readFille";
+import ReadFile from "../middlewares/ReadFile";
 import DefaultConfig from "../middlewares";
 import Mongo from "../database/mongo";
 import Aws from "../middlewares/aws";
@@ -44,9 +44,9 @@ class Server {
 	}
 
 	middlewares() {
-		new DefaultConfig(this.app)
-		new ReadFile(this.app)
-		new Aws()
+		let _defaultConfit = new DefaultConfig(this.app)
+		let _readFile = new ReadFile(this.app)
+		let _aws = new Aws()
 	}
 
 	routes() {
@@ -54,7 +54,7 @@ class Server {
 	}
 
 	sockets() {
-		new Sockets(this.io)
+		let _sockets = new Sockets(this.io)
 	}
 
 	listen() {

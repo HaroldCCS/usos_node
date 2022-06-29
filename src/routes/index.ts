@@ -4,8 +4,8 @@ import S3Router from '../apps/s3/S3Router';
 
 const router = Router();
 
-new S3Router(router)
-new DynamoRouter(router)
+let s3Router = new S3Router(router)
+let dynamoRouter = new DynamoRouter(router)
 
 
 export default router;

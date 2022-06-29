@@ -30,7 +30,7 @@ export default class Sockets {
       });
 
 
-      socket.on("disconnect", function (data: any) {
+      socket.on("disconnect", function (_data: any) {
         socket.to(socket.channel).emit("message", msgFormat('se ha desconectado', socket.username, 'connect'));
       });
 

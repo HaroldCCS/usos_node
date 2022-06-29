@@ -13,7 +13,7 @@ class DynamoService {
     }, 2000);
   }
 
-  public async create(req: Request, res: Response) {
+  public async create(_req: Request, res: Response) {
     const resUtil: ResponseUtility = new ResponseUtility(res)
 
     let table = "usersKeys";

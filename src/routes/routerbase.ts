@@ -18,11 +18,11 @@ export default class RouterBase {
     this.deletes()
   }
 
-  gets(): void { }
+  public gets(): void { }
 
-  posts(): void { }
+  public posts(): void { }
 
-  puts(): void { }
+  public puts(): void { }
 
-  deletes(): void { }
+  public deletes(): void { }
 }

@@ -1,6 +1,6 @@
 import { Application } from "express";
-const fileUpload = require('express-fileupload'); //requerido para leer imagenes
-const morgan = require('morgan'); //requerido para leer imagenes
+import fileUpload from 'express-fileupload'; //requerido para leer imagenes
+import morgan from 'morgan'; //requerido para leer imagenes
 
 export default class ReadFile {
 
